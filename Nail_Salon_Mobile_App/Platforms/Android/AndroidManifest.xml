@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="Nail_Salon_Mobile_App.MainActivity">
+	<!-- Убедитесь, что package соответствует вашему проекту -->
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-sdk android:minSdkVersion="29" />
+	<application android:allowBackup="true" android:supportsRtl="true" android:label="Nail Salon App" android:icon="@mipmap/favicon">
+		<!-- Убедитесь, что значок приложения существует в папке mipmap -->
+		<activity android:name=".MainActivity">
+			<!-- Убедитесь, что MainActivity соответствует вашему классу активности -->
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+	</application>
+</manifest>

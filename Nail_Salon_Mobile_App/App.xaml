@@ -1,0 +1,30 @@
+﻿<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Nail_Salon_Mobile_App.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Светлая тема -->
+            <Color x:Key="BackgroundColorLight">#FFF0F6</Color>
+            <Color x:Key="TextColorLight">#D81B60</Color>
+            <Color x:Key="EntryBackgroundLight">#FFFFFF</Color>
+            <Color x:Key="EntryTextColorLight">#000000</Color>
+            <Color x:Key="ButtonBackgroundLight">#D81B60</Color>
+            <Color x:Key="ButtonTextColorLight">#FFFFFF</Color>
+
+            <!-- Тёмная тема -->
+            <Color x:Key="BackgroundColorDark">#212121</Color>
+            <!-- Пример цвета -->
+            <Color x:Key="TextColorDark">#FFFFFF</Color>
+            <!-- Пример цвета -->
+            <Color x:Key="EntryBackgroundDark">#303030</Color>
+            <!-- Пример цвета -->
+            <Color x:Key="EntryTextColorDark">#FFFFFF</Color>
+            <!-- Пример цвета -->
+            <Color x:Key="ButtonBackgroundDark">#616161</Color>
+            <!-- Пример цвета -->
+            <Color x:Key="ButtonTextColorDark">#FFFFFF</Color>
+            <!-- Пример цвета -->
+        </ResourceDictionary>
+    </Application.Resources>
+
+</Application>

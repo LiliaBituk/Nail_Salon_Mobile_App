@@ -1,0 +1,98 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:system="clr-namespace:System;assembly=netstandard"
+             x:Class="Nail_Salon_Mobile_App.MainPage"
+             BackgroundColor="{DynamicResource BackgroundColorLight}">
+
+    <ScrollView>
+        <StackLayout Padding="10">
+            <Label Text="Создать клиента" 
+                   FontSize="20" 
+                   HorizontalOptions="Center" 
+                   TextColor="{DynamicResource TextColorLight}" />
+
+            <Entry x:Name="FullNameEntry" 
+                   Placeholder="ФИО" 
+                   PlaceholderColor="#BDBDBD" 
+                   TextColor="{DynamicResource EntryTextColorLight}" 
+                   BackgroundColor="{DynamicResource EntryBackgroundLight}" 
+                   Margin="0,5,0,0" />
+
+            <Label Text="Дата рождения" 
+                   FontSize="14" 
+                   TextColor="{DynamicResource TextColorLight}" 
+                   Margin="0,5,0,0" />
+            <DatePicker x:Name="BirthDatePicker" 
+                         Date="{x:Static system:DateTime.Now}" 
+                         BackgroundColor="{DynamicResource EntryBackgroundLight}" 
+                         Margin="0,5,0,0" />
+
+            <Entry x:Name="PhoneNumberEntry" 
+                   Placeholder="Телефон" 
+                   PlaceholderColor="#BDBDBD" 
+                   TextColor="{DynamicResource EntryTextColorLight}" 
+                   BackgroundColor="{DynamicResource EntryBackgroundLight}" 
+                   Margin="0,5,0,0" />
+
+            <Label Text="Услуга" 
+                   FontSize="14" 
+                   TextColor="{DynamicResource TextColorLight}" 
+                   Margin="0,5,0,0" />
+            <Picker x:Name="ServicePicker" 
+                    Title="Выберите услугу" 
+
+                    BackgroundColor="{DynamicResource EntryBackgroundLight}" 
+                    Margin="0,5,0,0">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Маникюр</x:String>
+                        <x:String>Педикюр</x:String>
+                        <x:String>Наращивание ногтей</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <Label Text="Дата записи" 
+                   FontSize="14" 
+                   TextColor="{DynamicResource TextColorLight}" 
+                   Margin="0,5,0,0" />
+            <DatePicker x:Name="AppointmentDatePicker" 
+                         Date="{x:Static system:DateTime.Now}" 
+                         BackgroundColor="{DynamicResource EntryBackgroundLight}" 
+                         Margin="0,5,0,0" />
+
+            <Label Text="Время записи" 
+                   FontSize="14" 
+                   TextColor="{DynamicResource TextColorLight}" 
+                   Margin="0,5,0,0" />
+            <TimePicker x:Name="AppointmentTimePicker" 
+                         Time="09:00" 
+                         BackgroundColor="{DynamicResource EntryBackgroundLight}" 
+                         Margin="0,5,0,0" />
+
+            <Button Text="Создать" 
+                    Clicked="OnCreateCustomerClicked" 
+                    BackgroundColor="{DynamicResource ButtonBackgroundLight}" 
+                    TextColor="{DynamicResource ButtonTextColorLight}" 
+                    Margin="0,5,0,0" />
+
+            <Image x:Name="QrCodeImage" 
+                   WidthRequest="250" 
+                   HeightRequest="250"
+                   HorizontalOptions="Center" 
+                   Margin="0,10,0,0" />
+
+            <Button Text="Сохранить QR-код" 
+                    Clicked="OnSaveQrCodeClicked" 
+                    BackgroundColor="{DynamicResource ButtonBackgroundLight}" 
+                    TextColor="{DynamicResource ButtonTextColorLight}" 
+                    Margin="0,5,0,0" />
+
+            <Button Text="Распознать QR-код" 
+                    Clicked="OnRecognizeQrCodeClicked" 
+                    BackgroundColor="{DynamicResource ButtonBackgroundLight}" 
+                    TextColor="{DynamicResource ButtonTextColorLight}" 
+                    Margin="0,5,0,0" />
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
