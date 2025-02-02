@@ -1,9 +1,11 @@
 ﻿
+using SQLite;
+
 namespace Business_Logic
 {
     public class Service
     {
-
+        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
         public string ServiceName { get; set; }

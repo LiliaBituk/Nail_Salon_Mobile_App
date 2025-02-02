@@ -58,6 +58,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Business_Logic\Business_Logic.csproj" />
+	  <ProjectReference Include="..\Data_Access\Data_Access.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,18 +1,20 @@
-﻿namespace Business_Logic
+﻿using SQLite;
+
+namespace Business_Logic
 {
     public class VisitLogs
     {
+        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        public Customer Customer { get; set; }
+        public int CustomerId { get; set; } 
+        public int ServiceId { get; set; }
 
-        public Service Service { get; set; }
-
-        public Employee Employee { get; set; }
+       // public int EmployeeId { get; set; } 
 
         public DateTime StartDateTime { get; set; }
 
-        public TimeSpan EndTime { get; set; }
+        public DateTime EndTime { get; set; }
 
         public decimal Price { get; set; }
     }

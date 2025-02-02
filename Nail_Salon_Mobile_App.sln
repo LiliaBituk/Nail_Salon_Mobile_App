@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nail_Salon_Mobile_App", "Na
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business_Logic", "Business_Logic\Business_Logic.csproj", "{B66ED40C-DCB1-4172-BFE5-D6FC68572D3C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data_Access", "Data_Access\Data_Access.csproj", "{89F39AC1-4916-4A86-B7D7-096A2E407F90}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{B66ED40C-DCB1-4172-BFE5-D6FC68572D3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B66ED40C-DCB1-4172-BFE5-D6FC68572D3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B66ED40C-DCB1-4172-BFE5-D6FC68572D3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89F39AC1-4916-4A86-B7D7-096A2E407F90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89F39AC1-4916-4A86-B7D7-096A2E407F90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89F39AC1-4916-4A86-B7D7-096A2E407F90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89F39AC1-4916-4A86-B7D7-096A2E407F90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,13 +1,9 @@
 ﻿using Business_Logic;
-using ZXing.Net.Maui;
-using ZXing.Net.Maui.Controls;
+using Data_Access;
 using ZXing.SkiaSharp;
 using ZXing;
 using BarcodeFormat = ZXing.BarcodeFormat;
 using ZXing.Common;
-using Microsoft.Maui.Graphics;
-using System.IO;
-using System.Threading.Tasks;
 using SkiaSharp;
 using System.Text.Json;
 
@@ -15,8 +11,10 @@ namespace Nail_Salon_Mobile_App;
 
 public partial class MainPage : ContentPage
 {
-    private ImageSource qrCodeImageSource;
-    private byte[] qrCodeBytes;
+    private Database _database;
+
+    private ImageSource _qrCodeImageSource;
+    private byte[] _qrCodeBytes;
 
     public class QrCodeData
     {
@@ -27,6 +25,9 @@ public partial class MainPage : ContentPage
     public MainPage()
     {
         InitializeComponent();
+
+        string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "customers.db3");
+        _database = new Database(dbPath);
     }
 
     private async void OnCreateCustomerClicked(object sender, EventArgs e)
@@ -41,40 +42,48 @@ public partial class MainPage : ContentPage
             TimeSpan appointmentTime = AppointmentTimePicker.Time;
             DateTime appointmentDateTime = appointmentDate.Add(appointmentTime);
 
-            var customer = new Customer
+            var existingCustomer = await _database.GetCustomerByDetailsAsync(fullName, phoneNumber);
+
+            if (existingCustomer == null)
             {
-                CustomerFullName = fullName,
-                CustomerBirthDate = birthDate,
-                CustomerPhoneNumber = phoneNumber,
-                CustomerIsNew = true 
-            };
+                existingCustomer = new Customer
+                {
+                    CustomerFullName = fullName,
+                    CustomerBirthDate = birthDate,
+                    CustomerPhoneNumber = phoneNumber,
+                    CustomerIsNew = true
+                };
 
-            var service = new Service
+                await _database.SaveCustomerAsync(existingCustomer);
+            } 
+            else
             {
-                ServiceName = selectedServiceName,
-                ServicePrice = 100, 
-                ServiceExecutionTime = TimeSpan.FromHours(1) 
-            };
+                existingCustomer.CustomerIsNew = false;
+            }
 
-            bool isEmployeeAvailable = true; 
-
-            bool isCustomerCreated = true; 
-
-            customer.IsRecordingSuccessful(isCustomerCreated, isEmployeeAvailable);
-
-            var qrCodeData = new VisitLogs
+            var service = await _database.GetServicesAsync(); 
+            var selectedService = service.FirstOrDefault(s => s.ServiceName == selectedServiceName);
+            if (selectedService == null)
             {
-                Customer = customer,
-                Service = service,
+                await DisplayAlert("Ошибка", "Услуга не найдена в базе данных.", "OK");
+                return;
+            }
+
+            var visitLog = new VisitLogs
+            {
+                CustomerId = existingCustomer.Id, 
+                ServiceId = selectedService.Id, 
                 StartDateTime = appointmentDateTime,
-                EndTime = appointmentDateTime.TimeOfDay.Add(service.ServiceExecutionTime),
-                Price = service.GetDiscountedPrice(customer.CustomerIsNew) 
+                EndTime = appointmentDateTime.Add(selectedService.ServiceExecutionTime),
+                Price = selectedService.GetDiscountedPrice(existingCustomer.CustomerIsNew)
             };
 
-            qrCodeBytes = GenerateQRCode(qrCodeData);
-            qrCodeImageSource = ImageSource.FromStream(() => new MemoryStream(qrCodeBytes));
+            await _database.SaveVisitLogAsync(visitLog);
 
-            QrCodeImage.Source = qrCodeImageSource;
+            _qrCodeBytes = GenerateQRCode(visitLog);
+            _qrCodeImageSource = ImageSource.FromStream(() => new MemoryStream(_qrCodeBytes));
+
+            QrCodeImage.Source = _qrCodeImageSource;
             await DisplayAlert("Успех", "QR-код с данными клиента сгенерирован!", "OK");
         }
         catch (ZXing.FormatException)
@@ -84,6 +93,26 @@ public partial class MainPage : ContentPage
         catch (Exception ex)
         {
             await DisplayAlert("Ошибка", $"Произошла ошибка: {ex.Message}", "OK");
+        }
+    }
+
+    private async Task InitializeServicesAsync()
+    {
+        var services = new List<Service>
+    {
+        new Service { ServiceName = "Маникюр", ServicePrice = 100, ServiceExecutionTime = TimeSpan.FromHours(1) },
+        new Service { ServiceName = "Педикюр", ServicePrice = 150, ServiceExecutionTime = TimeSpan.FromHours(1.5) },
+        new Service { ServiceName = "Наращивание", ServicePrice = 200, ServiceExecutionTime = TimeSpan.FromHours(2) }
+    };
+
+        foreach (var service in services)
+        {
+            var existingService = await _database.GetServicesAsync(); 
+            var serviceExists = existingService.FirstOrDefault(s => s.ServiceName == service.ServiceName);
+            if (serviceExists == null)
+            {
+                await _database.SaveServiceAsync(service);
+            }
         }
     }
 
@@ -127,7 +156,7 @@ public partial class MainPage : ContentPage
 
     private async void OnSaveQrCodeClicked(object sender, EventArgs e)
     {
-        if (qrCodeBytes == null)
+        if (_qrCodeBytes == null)
         {
             await DisplayAlert("Ошибка", "Сначала создайте QR-код.", "OK");
             return;
@@ -145,7 +174,7 @@ public partial class MainPage : ContentPage
 
             using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
             {
-                await fileStream.WriteAsync(qrCodeBytes, 0, qrCodeBytes.Length);
+                await fileStream.WriteAsync(_qrCodeBytes, 0, _qrCodeBytes.Length);
             }
             await DisplayAlert("Успех", $"QR-код сохранен в {filePath}", "OK");
         }
@@ -174,7 +203,7 @@ public partial class MainPage : ContentPage
 
                 using var bitmap = SKBitmap.Decode(imageBytes);
                 var barcodeReader = new BarcodeReader();
-                var decodeResult = barcodeReader.Decode(bitmap); 
+                var decodeResult = barcodeReader.Decode(bitmap);
 
                 if (decodeResult != null)
                 {
@@ -182,7 +211,13 @@ public partial class MainPage : ContentPage
                     try
                     {
                         var qrCodeData = JsonSerializer.Deserialize<VisitLogs>(decodedJson);
-                        await DisplayAlert("Распознанный QR-код", $"Клиент: {qrCodeData.Customer.CustomerFullName}, Услуга: {qrCodeData.Service.ServiceName}, Дата/Время: {qrCodeData.StartDateTime}", "OK");
+
+                        var customer = await _database.GetCustomerByIdAsync(qrCodeData.CustomerId);
+                        var service = await _database.GetServiceByIdAsync(qrCodeData.ServiceId);
+
+                        await DisplayAlert("Распознанный QR-код",
+                            $"Клиент: {customer?.CustomerFullName}, Услуга: {service?.ServiceName}, Дата/Время: {qrCodeData.StartDateTime}, Стоимость: {qrCodeData.Price}",
+                            "OK");
                     }
                     catch (JsonException ex)
                     {
@@ -201,11 +236,18 @@ public partial class MainPage : ContentPage
         }
     }
 
+    private async Task LoadServicesAsync()
+    {
+        var services = await _database.GetServicesAsync();
+        ServicePicker.ItemsSource = services.Select(s => s.ServiceName).ToList();
+    }
 
-
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
+
+        //await InitializeServicesAsync();
+        await LoadServicesAsync();
 
         if (Application.Current.RequestedTheme == AppTheme.Dark)
         {
@@ -215,7 +257,6 @@ public partial class MainPage : ContentPage
             Resources["EntryTextColorLight"] = Colors.White; // Белый текст для Entry
             Resources["ButtonBackgroundLight"] = Color.FromArgb("#FF6F91"); // Темно-розовая кнопка
             Resources["ButtonTextColorLight"] = Colors.Black; // Черный текст для кнопки
-            QrCodeImage.BackgroundColor = Color.FromArgb("#4A1A2D"); // Темный фон для QR-кода
         }
         else
         {
@@ -225,7 +266,6 @@ public partial class MainPage : ContentPage
             Resources["EntryTextColorLight"] = Colors.Black; // Черный текст для Entry
             Resources["ButtonBackgroundLight"] = Color.FromArgb("#D81B60"); // Светло-розовая кнопка
             Resources["ButtonTextColorLight"] = Colors.White; // Белый текст для кнопки
-            QrCodeImage.BackgroundColor = Color.FromArgb("#F8BBD0"); // Светлый фон для QR-кода
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿
+using SQLite;
+
 namespace Business_Logic
 {
     public class Employee
     {
-
+        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
         public string EmployeeFullName { get; set; }
@@ -20,6 +22,5 @@ namespace Business_Logic
 
         public int Score { get; set; }
 
-        public ICollection<VisitLogs> VisitLogs { get; set; }
     }
 }
