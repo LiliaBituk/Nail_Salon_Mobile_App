@@ -48,6 +48,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
 		<PackageReference Include="ZXing.Net" Version="0.16.9" />
 		<PackageReference Include="ZXing.Net.Bindings.SkiaSharp" Version="0.16.20" />
@@ -56,8 +57,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Business_Logic\Business_Logic.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Reference Include="Business_Logic">
-	    <HintPath>..\..\Nail_Salon_MVVM\Business_Logic\bin\Debug\net6.0\Business_Logic.dll</HintPath>
+	    <HintPath>..\Business_Logic\Business_Logic\bin\Debug\net7.0\Business_Logic.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
 
